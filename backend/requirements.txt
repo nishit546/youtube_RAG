@@ -1,0 +1,30 @@
+# YT RAG Assistant v2 — Backend Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core API
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+python-dotenv>=1.0.0
+
+# LangChain stack
+langchain>=0.1.0
+langchain-community>=0.0.30
+langchain-google-genai>=1.0.0
+langchain-core>=0.1.0
+langchain-text-splitters>=0.0.1
+
+# Embeddings
+sentence-transformers>=2.2.0
+
+# Vector store
+chromadb>=0.4.22
+
+# YouTube transcript
+youtube-transcript-api>=0.6.2
+
+# Optional: title fetching & Whisper fallback
+# yt-dlp>=2024.1.0       # Uncomment to enable title fetching + Whisper audio download
+# openai-whisper>=20231117  # Uncomment to enable Whisper STT fallback
+
+# HTTP
+httpx>=0.26.0  # for tests

@@ -1,307 +1,527 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YT RAG Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      --bg: #06090f;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --border-accent: rgba(99,102,241,0.4);
+      --indigo: #6366f1;
+      --cyan: #22d3ee;
+      --green: #34d399;
+      --red: #f87171;
+      --yellow: #fbbf24;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
     }
 
     body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      width: 400px;
-      min-height: 500px;
-      padding: 0;
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      color: #e5e7eb;
+      font-family: 'Inter', sans-serif;
+      width: 480px;
+      min-height: 560px;
+      max-height: 700px;
+      background: var(--bg);
+      color: var(--text);
       overflow: hidden;
-    }
-
-    .container {
-      padding: 20px;
+      display: flex;
+      flex-direction: column;
       position: relative;
     }
 
-    /* Animated background gradient */
-    .bg-gradient {
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-      animation: rotate 20s linear infinite;
+    /* ── Ambient glow ── */
+    .glow {
+      position: fixed;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      filter: blur(80px);
       pointer-events: none;
+      opacity: 0.12;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .glow-1 { background: var(--indigo); top: -80px; left: -60px; }
+    .glow-2 { background: var(--cyan); bottom: -80px; right: -60px; animation-delay: -6s; }
+
+    @keyframes drift {
+      from { transform: translate(0,0); }
+      to { transform: translate(30px, 20px); }
     }
 
-    @keyframes rotate {
-      from {
-        transform: rotate(0deg);
-      }
-
-      to {
-        transform: rotate(360deg);
-      }
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 10;
     }
 
-    h3 {
-      margin: 0 0 20px;
-      text-align: center;
-      font-size: 20px;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--indigo), var(--cyan));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: 14px;
       font-weight: 700;
-      background: linear-gradient(135deg, #a5b4fc 0%, #22d3ee 100%);
+      background: linear-gradient(135deg, #a5b4fc, var(--cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      position: relative;
-      z-index: 1;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
     }
 
-    .field {
-      margin-bottom: 14px;
-      position: relative;
-      z-index: 1;
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    input {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(99, 102, 241, 0.2);
-      background: rgba(2, 6, 23, 0.6);
-      backdrop-filter: blur(10px);
-      color: #e5e7eb;
-      outline: none;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    input:focus {
-      border-color: rgba(99, 102, 241, 0.6);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3);
-      transform: translateY(-1px);
-    }
-
-    input::placeholder {
-      color: #64748b;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
+    .icon-btn {
+      width: 28px; height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 13px;
+      color: var(--text-dim);
+      transition: all 0.2s;
+    }
+    .icon-btn:hover { background: var(--surface-hover); border-color: var(--border-accent); color: var(--text); }
+
+    /* ── Video bar ── */
+    .video-bar {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      z-index: 10;
+    }
+
+    .video-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .video-id-input {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .video-id-input:focus { border-color: var(--border-accent); }
+    .video-id-input::placeholder { color: var(--text-muted); }
+
+    .load-btn {
+      padding: 8px 14px;
+      background: linear-gradient(135deg, var(--indigo), var(--cyan));
+      border: none;
+      border-radius: 8px;
+      color: #fff;
       font-weight: 600;
-      font-size: 15px;
-      background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
-      color: #020617;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-      position: relative;
-      z-index: 1;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .load-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .load-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* ── Video chip ── */
+    .video-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .video-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 11px;
+      cursor: pointer;
+      color: var(--text-dim);
+      transition: all 0.2s;
+      max-width: 200px;
+    }
+    .video-chip.active {
+      background: rgba(99,102,241,0.12);
+      border-color: var(--border-accent);
+      color: #a5b4fc;
+    }
+    .video-chip:hover:not(.active) { background: var(--surface-hover); color: var(--text); }
+
+    .chip-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--indigo);
+      flex-shrink: 0;
+    }
+
+    .chip-label {
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: left 0.5s;
+    .chip-close {
+      font-size: 10px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+    .chip-close:hover { color: var(--red); }
+
+    /* ── Mode selector ── */
+    .mode-row {
+      display: flex;
+      gap: 6px;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: relative;
+      z-index: 10;
+    }
+    .mode-row::-webkit-scrollbar { display: none; }
+
+    .mode-btn {
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .mode-btn:hover { background: var(--surface-hover); color: var(--text); }
+    .mode-btn.active {
+      background: rgba(99,102,241,0.15);
+      border-color: var(--border-accent);
+      color: #a5b4fc;
+      font-weight: 600;
     }
 
-    button:hover::before {
-      left: 100%;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
+    /* ── Chat ── */
     .chat {
-      margin-top: 16px;
-      max-height: 280px;
+      flex: 1;
       overflow-y: auto;
-      padding-right: 8px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
       position: relative;
       z-index: 1;
+      min-height: 200px;
+      max-height: 320px;
     }
 
-    .chat::-webkit-scrollbar {
-      width: 6px;
-    }
+    .chat::-webkit-scrollbar { width: 4px; }
+    .chat::-webkit-scrollbar-track { background: transparent; }
+    .chat::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 4px; }
 
-    .chat::-webkit-scrollbar-track {
-      background: rgba(30, 41, 59, 0.3);
-      border-radius: 10px;
+    .welcome {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.7;
     }
-
-    .chat::-webkit-scrollbar-thumb {
-      background: rgba(99, 102, 241, 0.5);
-      border-radius: 10px;
-    }
-
-    .chat::-webkit-scrollbar-thumb:hover {
-      background: rgba(99, 102, 241, 0.7);
-    }
+    .welcome-icon { font-size: 32px; margin-bottom: 10px; }
+    .welcome h4 { font-size: 14px; font-weight: 600; color: var(--text-dim); margin-bottom: 6px; }
 
     .msg {
-      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      animation: slideUp 0.25s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-user {
+      align-items: flex-end;
+    }
+
+    .msg-bot {
+      align-items: flex-start;
+    }
+
+    .msg-bubble {
+      max-width: 88%;
       padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .msg-user .msg-bubble {
+      background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(34,211,238,0.15));
+      border: 1px solid rgba(99,102,241,0.3);
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-bot .msg-bubble {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg-mode-tag {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0 4px;
+    }
+
+    /* ── Source chips ── */
+    .sources {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .source-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      background: rgba(34,211,238,0.08);
+      border: 1px solid rgba(34,211,238,0.2);
       border-radius: 12px;
-      font-size: 13px;
-      line-height: 1.5;
-      animation: slideIn 0.3s ease;
-      word-wrap: break-word;
+      font-size: 10px;
+      color: var(--cyan);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .source-chip:hover {
+      background: rgba(34,211,238,0.16);
+      border-color: rgba(34,211,238,0.4);
     }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* ── Status bar ── */
+    .status-bar {
+      padding: 6px 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
     }
 
-    .user {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(34, 211, 238, 0.2));
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      text-align: right;
-      margin-left: 40px;
+    .spinner {
+      width: 12px; height: 12px;
+      border: 2px solid rgba(99,102,241,0.2);
+      border-top-color: var(--indigo);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .bot {
-      background: rgba(2, 6, 23, 0.6);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(99, 102, 241, 0.2);
-      margin-right: 40px;
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
+    .status-dot.ok { background: var(--green); }
+    .status-dot.error { background: var(--red); }
+    .status-dot.warn { background: var(--yellow); }
 
-    .error {
-      color: #fca5a5;
-      font-size: 12px;
-      margin-top: 8px;
-      text-align: center;
-      padding: 8px;
-      background: rgba(239, 68, 68, 0.1);
+    /* ── Error notice ── */
+    .error-bar {
+      margin: 0 16px 8px;
+      padding: 8px 12px;
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.2);
       border-radius: 8px;
-      border: 1px solid rgba(239, 68, 68, 0.2);
+      font-size: 11px;
+      color: var(--red);
+      display: none;
+    }
+
+    /* ── Input area ── */
+    .input-area {
+      padding: 10px 16px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
       position: relative;
-      z-index: 1;
-      animation: shake 0.3s ease;
+      z-index: 10;
+      background: rgba(6,9,15,0.8);
+      backdrop-filter: blur(12px);
     }
 
-    @keyframes shake {
-
-      0%,
-      100% {
-        transform: translateX(0);
-      }
-
-      25% {
-        transform: translateX(-5px);
-      }
-
-      75% {
-        transform: translateX(5px);
-      }
-    }
-
-    .loading {
+    .question-input {
+      flex: 1;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
       font-size: 13px;
-      color: #94a3b8;
-      text-align: center;
-      margin-top: 8px;
-      position: relative;
-      z-index: 1;
-      animation: pulse 1.5s ease-in-out infinite;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      resize: none;
+      min-height: 40px;
+      max-height: 100px;
+      line-height: 1.5;
+      transition: border-color 0.2s;
     }
+    .question-input:focus { border-color: var(--border-accent); }
+    .question-input::placeholder { color: var(--text-muted); }
 
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.5;
-      }
+    .send-btn {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--indigo), var(--cyan));
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
     }
+    .send-btn:hover { opacity: 0.9; transform: scale(1.05); }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-    .loading::after {
-      content: '...';
-      animation: dots 1.5s steps(4, end) infinite;
+    /* ── Compare button ── */
+    .compare-btn {
+      display: none;
+      width: calc(100% - 32px);
+      margin: 0 16px 8px;
+      padding: 8px;
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.25);
+      border-radius: 8px;
+      color: var(--yellow);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
     }
-
-    @keyframes dots {
-
-      0%,
-      20% {
-        content: '.';
-      }
-
-      40% {
-        content: '..';
-      }
-
-      60%,
-      100% {
-        content: '...';
-      }
-    }
+    .compare-btn:hover { background: rgba(251,191,36,0.14); }
+    .compare-btn.visible { display: block; }
   </style>
 </head>
 
-
 <body>
-  <div class="bg-gradient"></div>
-  <div class="container">
-    <h3>YouTube RAG Assistant</h3>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
 
-    <div class="field">
-      <input id="videoId" placeholder="YouTube Video ID (e.g. aircAruvnKk)" />
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">▶</div>
+      <div class="logo-text">YT RAG Assistant</div>
     </div>
-
-    <div class="field">
-      <input id="question" placeholder="Ask a question about the video..." />
+    <div class="header-actions">
+      <div class="icon-btn" id="clearBtn" title="Clear chat history">🗑</div>
+      <div class="icon-btn" id="refreshBtn" title="Re-ingest current video">↺</div>
     </div>
+  </div>
 
-    <button id="askBtn">Ask</button>
+  <!-- Video Bar -->
+  <div class="video-bar">
+    <div class="video-row">
+      <input class="video-id-input" id="videoIdInput" placeholder="Video ID auto-detected from YouTube tab…" />
+      <button class="load-btn" id="loadBtn">Load</button>
+    </div>
+    <div class="video-chips" id="videoChips"></div>
+  </div>
 
-    <div id="status" class="loading" style="display:none;"></div>
-    <div id="error" class="error"></div>
+  <!-- Mode Selector -->
+  <div class="mode-row" id="modeRow">
+    <button class="mode-btn active" data-mode="ask">💬 Ask</button>
+    <button class="mode-btn" data-mode="summary">📝 Summary</button>
+    <button class="mode-btn" data-mode="keypoints">🔑 Key Points</button>
+    <button class="mode-btn" data-mode="deep">🔬 Deep Dive</button>
+    <button class="mode-btn" data-mode="quiz">🧠 Quiz</button>
+    <button class="mode-btn" data-mode="navigate">🧭 Navigate</button>
+  </div>
 
-    <div id="chat" class="chat"></div>
+  <!-- Chat -->
+  <div class="chat" id="chat">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">🎬</div>
+      <h4>Load a video to get started</h4>
+      Open a YouTube video, then click <strong>Load</strong> to ingest it.<br/>
+      Then ask anything — with timestamps!
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="error-bar" id="errorBar"></div>
+  <div class="status-bar" id="statusBar"></div>
+
+  <!-- Compare button (shown when 2+ videos loaded) -->
+  <button class="compare-btn" id="compareBtn">⚡ Compare All Loaded Videos</button>
+
+  <!-- Input -->
+  <div class="input-area">
+    <textarea class="question-input" id="questionInput" placeholder="Ask a question about the video…" rows="1"></textarea>
+    <button class="send-btn" id="sendBtn" title="Send">➤</button>
   </div>
 
   <script src="popup.js"></script>
 </body>
-
 </html>

@@ -1,13 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "YouTube RAG Assistant",
-  "version": "1.0",
-  "description": "Ask questions about a YouTube video transcript",
+  "name": "YT RAG Assistant",
+  "version": "2.0",
+  "description": "Intelligent YouTube video assistant with RAG, timestamps, and smart modes.",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "http://localhost:8000/*"
+  ],
   "action": {
     "default_popup": "popup.html"
   },
-  "permissions": [],
-  "host_permissions": [
-    "http://localhost:8000/*"
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
   ]
 }
