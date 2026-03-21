@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      width: 400px;
+      min-height: 500px;
+      padding: 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .container {
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Animated background gradient */
+    .bg-gradient {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    h3 {
+      margin: 0 0 20px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a5b4fc 0%, #22d3ee 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      background: rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(10px);
+      color: #e5e7eb;
+      outline: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    input:focus {
+      border-color: rgba(99, 102, 241, 0.6);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
+      color: #020617;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .chat {
+      margin-top: 16px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chat::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat::-webkit-scrollbar-track {
+      background: rgba(30, 41, 59, 0.3);
+      border-radius: 10px;
+    }
+
+    .chat::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.5);
+      border-radius: 10px;
+    }
+
+    .chat::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.7);
+    }
+
+    .msg {
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      animation: slideIn 0.3s ease;
+      word-wrap: break-word;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .user {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(34, 211, 238, 0.2));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      text-align: right;
+      margin-left: 40px;
+    }
+
+    .bot {
+      background: rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      margin-right: 40px;
+    }
+
+    .error {
+      color: #fca5a5;
+      font-size: 12px;
+      margin-top: 8px;
+      text-align: center;
+      padding: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      position: relative;
+      z-index: 1;
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-5px);
+      }
+
+      75% {
+        transform: translateX(5px);
+      }
+    }
+
+    .loading {
+      font-size: 13px;
+      color: #94a3b8;
+      text-align: center;
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .loading::after {
+      content: '...';
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+
+    @keyframes dots {
+
+      0%,
+      20% {
+        content: '.';
+      }
+
+      40% {
+        content: '..';
+      }
+
+      60%,
+      100% {
+        content: '...';
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+  <div class="bg-gradient"></div>
+  <div class="container">
+    <h3>YouTube RAG Assistant</h3>
+
+    <div class="field">
+      <input id="videoId" placeholder="YouTube Video ID (e.g. aircAruvnKk)" />
+    </div>
+
+    <div class="field">
+      <input id="question" placeholder="Ask a question about the video..." />
+    </div>
+
+    <button id="askBtn">Ask</button>
+
+    <div id="status" class="loading" style="display:none;"></div>
+    <div id="error" class="error"></div>
+
+    <div id="chat" class="chat"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

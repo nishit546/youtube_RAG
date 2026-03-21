@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube RAG Assistant",
+  "version": "1.0",
+  "description": "Ask questions about a YouTube video transcript",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [],
+  "host_permissions": [
+    "http://localhost:8000/*"
+  ]
+}
