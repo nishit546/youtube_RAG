@@ -41,7 +41,7 @@ def format_history_for_prompt(history: list[dict]) -> str:
 
     Example output:
         User: What is this video about?
-        Assistant: This video explains..
+        Assistant: This video explains.
         User: Tell me more about X.
         Assistant: X refers to.
     """
