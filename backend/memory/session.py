@@ -43,7 +43,7 @@ def format_history_for_prompt(history: list[dict]) -> str:
         User: What is this video about?
         Assistant: This video explains...
         User: Tell me more about X.
-        Assistant: X refers to...
+        Assistant: X refers to.
     """
     if not history:
         return ""
