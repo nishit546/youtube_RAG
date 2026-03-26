@@ -28,7 +28,7 @@ const clearBtn       = document.getElementById("clearBtn");
 const refreshBtn     = document.getElementById("refreshBtn");
 const compareBtn     = document.getElementById("compareBtn");
 
-// ── State ─────────────────────────────────────────────────────────────────────
+// ── State ────────
 let loadedVideos  = {};      // { video_id: { title, source } }
 let activeVideoId = null;
 let activeMode    = "ask";
