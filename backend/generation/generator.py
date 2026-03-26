@@ -22,7 +22,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 logger = logging.getLogger(__name__)
 
-# ── Singleton LLM ─────────────────────────────────────────────────────────────
+# ── Singleton LLM ───
 _llm: ChatGoogleGenerativeAI | None = None
 
 

@@ -11,7 +11,7 @@ extension. For multi-user production, replace with Redis or a DB-backed store.
 from collections import defaultdict
 from typing import Optional
 
-# ── Session store (singleton) ──
+# ── Session store (singleton) ─
 _sessions: dict[str, list[dict]] = defaultdict(list)
 
 
