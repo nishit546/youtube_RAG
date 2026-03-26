@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-# ── Request / Response Models ─────────────────────────────────────────────────
+# ── Request / Response Models ─────────
 
 class IngestRequest(BaseModel):
     video_id: str
@@ -37,7 +37,7 @@ class IngestResponse(BaseModel):
     title: str
     chunk_count: int
     cached: bool
-    source: str   # "youtube" | "whisper"
+    source: str  
 
 
 class AskRequest(BaseModel):
