@@ -1,6 +1,5 @@
 /**
  * content.js
- *
  * Injected into YouTube pages.
  * Responds to messages from the popup asking for the current video ID.
  */
