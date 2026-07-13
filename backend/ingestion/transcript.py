@@ -157,7 +157,7 @@ def load_transcript(video_id: str, force_refresh: bool = False) -> dict:
     source = "youtube"
     try:
         # youtube-transcript-api v1.x: use list_transcripts + fetch()
-        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+        transcript_list = YouTubeTranscriptApi().list(video_id)
         # Try to find any available transcript (manual first, then auto-generated)
         try:
             transcript = transcript_list.find_transcript(["en", "en-US", "en-GB"])
